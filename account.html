@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Sign In</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #e8f5e9);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      filter: blur(100px);
+      animation: blobMove 20s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+
+    .blob:nth-child(1) { top: -100px; left: -100px; animation-delay: 0s; }
+    .blob:nth-child(2) { bottom: -100px; right: -100px; animation-delay: 5s; }
+    .blob:nth-child(3) { top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 10s; }
+
+    @keyframes blobMove {
+      0%   { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.2) translate(60px, 40px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 360px;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      font-size: 28px;
+      color: #333;
+    }
+
+    p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      padding: 14px 28px;
+      font-size: 18px;
+      background: #4285F4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+    }
+
+    button:hover {
+      background: #3367d6;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAuKfk6pdPc5ej5spgPED82uzu8PHucMds",
+      authDomain: "public-health-e8fc9.firebaseapp.com",
+      projectId: "public-health-e8fc9",
+      storageBucket: "public-health-e8fc9.firebasestorage.app",
+      messagingSenderId: "912640760614",
+      appId: "1:912640760614:web:9140025c48179271b83fe7",
+      measurementId: "G-1GXCPG7S7D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.loginWithGoogle = async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        localStorage.setItem("user", JSON.stringify({
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+          uid: user.uid
+        }));
+
+        window.location.href = "home.html";
+      } catch (error) {
+        console.error(error);
+        alert("Login failed: " + error.message);
+      }
+    };
+  </script>
+</head>
+<body>
+  <!-- Animated Blobs -->
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+
+  <!-- Login Container -->
+  <div class="container">
+    <img src="img/1.jpg" alt="Logo" class="logo" />
+    <h1>Welcome Back!</h1>
+    <p>Sign in with your Google account to continue</p>
+    <button onclick="loginWithGoogle()">Sign in with Google</button>
+  </div>
+</body>
+</html>
